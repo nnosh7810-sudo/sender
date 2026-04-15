@@ -55,7 +55,6 @@
     .button {
       width: 100%;
       padding: 14px;
-      background: #6a11cb;
       background: linear-gradient(135deg, #007bff, #6a11cb);
       color: white;
       font-size: 18px;
@@ -70,6 +69,52 @@
       font-size: 14px;
       color: #777;
     }
+
+    /* مربع الرقم */
+    #numberBox {
+      display: none;
+      background: #e3f2fd;
+      border: 2px solid #007bff;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #generatedNumber {
+      font-size: 26px;
+      font-weight: bold;
+      color: #004085;
+      margin-bottom: 10px;
+    }
+
+    /* مربع كود التحقق */
+    #verifyBox {
+      display: none;
+      background: #d4edda;
+      border: 2px solid #28a745;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #verifyCode {
+      font-size: 26px;
+      font-weight: bold;
+      color: #155724;
+      margin-bottom: 10px;
+    }
+
+    .copyBtn {
+      background: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -78,6 +123,7 @@
     <div class="logo">Sender</div>
     <div class="title" id="title">Get your unique chat number</div>
 
+    <!-- Step 1 -->
     <div class="label" id="step1">Step 1: Enter Your Code</div>
     <input id="codeInput" class="input-box" placeholder="6-digit code" />
 
@@ -85,18 +131,32 @@
       Get My Number
     </button>
 
+    <!-- مربع الرقم -->
+    <div id="numberBox">
+      <h3 id="numberTitle">Your Number</h3>
+      <p id="generatedNumber"></p>
+      <button class="copyBtn" onclick="copyNumber()">Copy Number</button>
+    </div>
+
+    <!-- Step 2 -->
     <div class="label" id="step2">Step 2: Get Verification Code</div>
     <input id="phoneInput" class="input-box" placeholder="+000XXXXXXXXXXX" />
 
-    <button class="button" onclick="verify()" id="btn2">
+    <button class="button" onclick="getVerificationCode()" id="btn2">
       Get Verification Code
     </button>
+
+    <!-- مربع كود التحقق -->
+    <div id="verifyBox">
+      <h3 id="verifyTitle">Your Verification Code</h3>
+      <p id="verifyCode"></p>
+      <button class="copyBtn" onclick="copyVerifyCode()">Copy Code</button>
+    </div>
 
     <div class="footer">sender.com</div>
   </div>
 
   <script>
-    // قراءة اللغة من الرابط
     const params = new URLSearchParams(window.location.search);
     const lang = params.get("lang") || "en";
 
@@ -110,15 +170,59 @@
       document.getElementById("btn2").innerText = "احصل على رمز التحقق";
 
       document.getElementById("codeInput").placeholder = "رمز من 6 أرقام";
-      document.getElementById("phoneInput").placeholder = "رقم هاتفك";
+      document.getElementById("phoneInput").placeholder = "رقمك";
+
+      document.getElementById("numberTitle").innerText = "رقمك";
+      document.getElementById("verifyTitle").innerText = "رمز التحقق الخاص بك";
+    }
+
+    function generateNumber() {
+      const random = Math.floor(1000000000 + Math.random() * 9000000000);
+      return `+000${random}`;
     }
 
     function getNumber() {
-      alert(lang === "ar" ? "سيتم إرسال رقمك قريبًا" : "Your number will be sent soon");
+      const code = document.getElementById("codeInput").value.trim();
+
+      if (code.length !== 6) {
+        alert(lang === "ar" ? "الرجاء إدخال رمز صحيح" : "Please enter a valid 6-digit code");
+        return;
+      }
+
+      const number = generateNumber();
+
+      document.getElementById("generatedNumber").innerText = number;
+      document.getElementById("numberBox").style.display = "block";
     }
 
-    function verify() {
-      alert(lang === "ar" ? "سيتم إرسال رمز التحقق" : "Verification code will be sent");
+    function copyNumber() {
+      const number = document.getElementById("generatedNumber").innerText;
+      navigator.clipboard.writeText(number);
+      alert(lang === "ar" ? "تم النسخ!" : "Copied!");
+    }
+
+    function generateVerificationCode() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    function getVerificationCode() {
+      const number = document.getElementById("phoneInput").value.trim();
+
+      if (number === "") {
+        alert(lang === "ar" ? "الرجاء إدخال الرقم" : "Please enter your number");
+        return;
+      }
+
+      const code = generateVerificationCode();
+
+      document.getElementById("verifyCode").innerText = code;
+      document.getElementById("verifyBox").style.display = "block";
+    }
+
+    function copyVerifyCode() {
+      const code = document.getElementById("verifyCode").innerText;
+      navigator.clipboard.writeText(code);
+      alert(lang === "ar" ? "تم النسخ!" : "Copied!");
     }
   </script>
 </body>
